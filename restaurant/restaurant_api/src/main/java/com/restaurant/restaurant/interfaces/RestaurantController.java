@@ -10,6 +10,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
+@CrossOrigin
 @RestController
 public class RestaurantController {
 
@@ -33,4 +34,10 @@ public class RestaurantController {
         URI location = new URI("/restaurant/" + restaurant.getId());
         return ResponseEntity.created(location).body("{}");
     }
+
+    @PatchMapping("/restaurants/{id}")
+    public void patchRestaurant(@PathVariable("id") long id, @RequestBody Restaurant resource){
+        restaurantService.patchRestaurant(id, resource.getName(), resource.getAddress());
+    }
+
 }
