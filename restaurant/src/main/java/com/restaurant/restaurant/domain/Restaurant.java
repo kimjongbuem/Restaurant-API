@@ -1,12 +1,30 @@
 package com.restaurant.restaurant.domain;
 
-public class Restaurant {
-    private final long id;
-    private final String name;
-    private final String address;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Transient;
+import java.util.List;
 
-    public Restaurant(long id, String name, String address){
-        this.id = id;
+@Entity
+public class Restaurant {
+
+    @Id
+    @GeneratedValue
+    private long id;
+
+    private String name;
+
+    private String address;
+
+    @Transient
+    private List<MenuItem> menuItems;
+
+    public Restaurant(){
+
+    }
+
+    public Restaurant(String name, String address){
         this.name = name;
         this.address = address;
     }
@@ -17,5 +35,13 @@ public class Restaurant {
 
     public String getName(){
         return name;
+    }
+
+    public String getAddress(){
+        return address;
+    }
+
+    public void setMenuItems(List<MenuItem> menuItems) {
+        this.menuItems = menuItems;
     }
 }

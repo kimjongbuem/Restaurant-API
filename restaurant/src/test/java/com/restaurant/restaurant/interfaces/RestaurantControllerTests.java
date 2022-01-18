@@ -9,18 +9,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultMatcher;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.core.StringContains.containsString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(RestaurantController.class)
@@ -40,9 +42,9 @@ class RestaurantControllerTests {
     @BeforeEach
     public void setUp(){
         List<Restaurant> restaurantList = new ArrayList<>();
-        Restaurant restaurant = new Restaurant(1004L, "JOKER HOUSE", "Seoul");
+        Restaurant restaurant = new Restaurant("JOKER HOUSE", "Seoul");
         restaurantList.add(restaurant);
-        restaurantList.add(new Restaurant(2020L, "NUKER HOUSE", "Seoul"));
+        restaurantList.add(new Restaurant("NUKER HOUSE", "Seoul"));
         given(restaurantService.getRestaurant(1004L)).willReturn(restaurant);
         given(restaurantService.getRestaurants()).willReturn(restaurantList);
     }
@@ -51,7 +53,8 @@ class RestaurantControllerTests {
     public void getRestaurants() throws Exception {
 
          mvc.perform(get("/restaurants")).andExpect(status().isOk())
-                .andExpect(content().string(containsString("\"id\":1004")));
+                 .andExpect(content().string(containsString("\"name\":\"JOKER HOUSE\"")))
+                 .andExpect(content().string(containsString("\"name\":\"NUKER HOUSE\"")));
 
     }
 
@@ -59,6 +62,21 @@ class RestaurantControllerTests {
     public void getRestaurant() throws Exception {
         mvc.perform(get("/restaurants/1004")).andExpect(status().isOk())
                 .andExpect(content().string(containsString("\"name\":\"JOKER HOUSE\"")));
+    }
 
+    @Test
+    public void save() throws Exception {
+
+        Restaurant restaurant = new Restaurant("JOKER HOUSE", "seoul");
+
+        restaurantService.save(restaurant);
+
+        mvc.perform(post("/restaurants").
+                contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"JOKER HOUSE\", \"address\":\"seoul\"}"))
+                .andExpect(status().isCreated())
+                .andExpect((ResultMatcher) header().string("location", "/restaurant/"+restaurant.getId()))
+                .andExpect(content().string(containsString("{}")));
+
+        verify(restaurantService).save(restaurant);
     }
 }
