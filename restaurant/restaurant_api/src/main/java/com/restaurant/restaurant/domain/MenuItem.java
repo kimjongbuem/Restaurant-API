@@ -1,5 +1,6 @@
 package com.restaurant.restaurant.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -21,4 +22,7 @@ public class MenuItem {
     private long restaurantId;
 
     private String name;
+
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    private boolean deleted;
 }

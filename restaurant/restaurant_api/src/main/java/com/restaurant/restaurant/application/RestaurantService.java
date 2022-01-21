@@ -30,8 +30,8 @@ public class RestaurantService {
     }
 
     public Restaurant getRestaurant(long id) {
-        List<MenuItem> menuItems = menuItemRepository.findByRestaurantId(id);
         Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(()-> new RestaurantNotFoundException(id));
+        List<MenuItem> menuItems = menuItemRepository.findByRestaurantId(id);
         restaurant.setMenuItems(menuItems);
         return restaurant;
     }

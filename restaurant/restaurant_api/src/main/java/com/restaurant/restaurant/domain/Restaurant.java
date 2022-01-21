@@ -1,5 +1,6 @@
 package com.restaurant.restaurant.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -28,5 +29,6 @@ public class Restaurant {
     private String address;
 
     @Transient
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<MenuItem> menuItems;
 }

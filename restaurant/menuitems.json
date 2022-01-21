@@ -1,0 +1,13 @@
+[
+  {
+    "id": 2,
+    "name":"kimchi"
+  } ,
+  {
+    "id": 3,
+    "deleted" : true
+  },
+  {
+    "name":"cookie"
+  }
+]
