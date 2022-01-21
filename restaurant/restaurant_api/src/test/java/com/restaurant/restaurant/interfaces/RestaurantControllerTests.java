@@ -81,6 +81,13 @@ class RestaurantControllerTests {
     }
 
     @Test
+    public void inValidSave() throws Exception {
+        mvc.perform(post("/restaurants").
+                contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"\", \"address\":\"\"}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     public void patchRestaurant() throws Exception {
 
         mvc.perform(patch("/restaurants/1004")
@@ -88,5 +95,14 @@ class RestaurantControllerTests {
                 .andExpect(status().isOk());
 
         verify(restaurantService).patchRestaurant(1004L, "SOOL HOUSE", "Busan");
+    }
+
+    @Test
+    public void invalidPatchRestaurant() throws Exception {
+
+        mvc.perform(patch("/restaurants/1004")
+                .contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"\", \"address\":\"\"}"))
+                .andExpect(status().isBadRequest());
+
     }
 }

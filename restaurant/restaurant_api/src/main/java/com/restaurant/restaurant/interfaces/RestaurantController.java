@@ -4,6 +4,7 @@ import com.restaurant.restaurant.application.RestaurantService;
 import com.restaurant.restaurant.domain.Restaurant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -28,7 +29,7 @@ public class RestaurantController {
     }
 
     @PostMapping("/restaurants")
-    public ResponseEntity<?> saveRestaurant(@RequestBody Restaurant resource) throws URISyntaxException {
+    public ResponseEntity<?> saveRestaurant(@Validated @RequestBody Restaurant resource) throws URISyntaxException {
         Restaurant restaurant = Restaurant.builder().name(resource.getName()).address(resource.getAddress()).build();
         restaurantService.save(restaurant);
         URI location = new URI("/restaurant/" + restaurant.getId());
@@ -36,7 +37,7 @@ public class RestaurantController {
     }
 
     @PatchMapping("/restaurants/{id}")
-    public void patchRestaurant(@PathVariable("id") long id, @RequestBody Restaurant resource){
+    public void patchRestaurant(@PathVariable("id") long id, @Validated @RequestBody Restaurant resource){
         restaurantService.patchRestaurant(id, resource.getName(), resource.getAddress());
     }
 
