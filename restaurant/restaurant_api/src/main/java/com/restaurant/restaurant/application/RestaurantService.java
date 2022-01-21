@@ -4,6 +4,7 @@ import com.restaurant.restaurant.domain.MenuItem;
 import com.restaurant.restaurant.domain.MenuItemRepository;
 import com.restaurant.restaurant.domain.Restaurant;
 import com.restaurant.restaurant.domain.RestaurantRepository;
+import com.restaurant.restaurant.interfaces.RestaurantNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,8 +31,7 @@ public class RestaurantService {
 
     public Restaurant getRestaurant(long id) {
         List<MenuItem> menuItems = menuItemRepository.findByRestaurantId(id);
-        Restaurant restaurant = restaurantRepository.findById(id).orElse(null);
-        assert restaurant != null;
+        Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(()-> new RestaurantNotFoundException(id));
         restaurant.setMenuItems(menuItems);
         return restaurant;
     }

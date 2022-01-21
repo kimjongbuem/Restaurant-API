@@ -65,6 +65,14 @@ class RestaurantControllerTests {
     }
 
     @Test
+    public void getInValidRestaurant() throws Exception {
+        given(restaurantService.getRestaurant(404L)).willThrow(new RestaurantNotFoundException(404L));
+
+        mvc.perform(get("/restaurants/404")).andExpect(status().isNotFound())
+                .andExpect(content().string(containsString("{}")));
+    }
+
+    @Test
     public void save() throws Exception {
 
         Restaurant restaurant = Restaurant.builder().name("JOKER HOUSE").address("Seoul").build();

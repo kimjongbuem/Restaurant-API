@@ -3,12 +3,14 @@ package com.restaurant.restaurant.application;
 import com.restaurant.restaurant.domain.MenuItemRepository;
 import com.restaurant.restaurant.domain.Restaurant;
 import com.restaurant.restaurant.domain.RestaurantRepository;
+import com.restaurant.restaurant.interfaces.RestaurantNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +57,13 @@ class RestaurantServiceTests {
         Restaurant restaurant = restaurantService.getRestaurant(1004L);
         assert restaurant != null;
         assertThat(restaurant.getName(), is("JOKER HOUSE"));
+    }
+
+    @Test
+    public void getInValidRestaurant(){
+        assertThrows(RestaurantNotFoundException.class, () -> {
+            Restaurant restaurant = restaurantService.getRestaurant(404L);
+        });
     }
 
     @Test
