@@ -36,9 +36,9 @@ class RestaurantServiceTests {
         MockitoAnnotations.openMocks(this);
         restaurantService = new RestaurantService(restaurantRepository, menuItemRepository);
         List<Restaurant> restaurantList = new ArrayList<>();
-        Restaurant restaurant = new Restaurant("JOKER HOUSE", "Seoul");
+        Restaurant restaurant = Restaurant.builder().name("JOKER HOUSE").address("Seoul").build();
         restaurantList.add(restaurant);
-        restaurantList.add(new Restaurant("NUKER HOUSE", "Seoul"));
+        restaurantList.add(Restaurant.builder().name("NUKER HOUSE").address("Seoul").build());
         when(restaurantRepository.findById(1004L)).thenReturn(Optional.of(restaurant));
         when(restaurantRepository.findAll()).thenReturn(restaurantList);
     }
@@ -59,16 +59,16 @@ class RestaurantServiceTests {
 
     @Test
     public void save(){
-        Restaurant restaurant = new Restaurant("BeY", "busan");
+        Restaurant restaurant = Restaurant.builder().name("BeY").address("Busan").build();
         when(restaurantRepository.save(restaurant)).thenReturn(restaurant);
         restaurant = restaurantService.save(restaurant);
         assertThat(restaurant.getName(), is("BeY"));
-        assertThat(restaurant.getAddress(), is("busan"));
+        assertThat(restaurant.getAddress(), is("Busan"));
     }
 
     @Test
     public void patchRestaurant(){
-        Restaurant restaurant = new Restaurant("BeY", "busan");
+        Restaurant restaurant = Restaurant.builder().name("BeY").address("Busan").build();
         when(restaurantRepository.findById(1004L)).thenReturn(Optional.of(restaurant));
         restaurantService.patchRestaurant(1004L, "SOOL HOUSE", "Busan");
         assertThat(restaurant.getName(), is("SOOL HOUSE"));

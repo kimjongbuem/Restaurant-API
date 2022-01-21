@@ -42,9 +42,9 @@ class RestaurantControllerTests {
     @BeforeEach
     public void setUp(){
         List<Restaurant> restaurantList = new ArrayList<>();
-        Restaurant restaurant = new Restaurant("JOKER HOUSE", "Seoul");
+        Restaurant restaurant = Restaurant.builder().name("JOKER HOUSE").address("Seoul").build();
         restaurantList.add(restaurant);
-        restaurantList.add(new Restaurant("NUKER HOUSE", "Seoul"));
+        restaurantList.add(Restaurant.builder().name("NUKER HOUSE").address("Seoul").build());
         given(restaurantService.getRestaurant(1004L)).willReturn(restaurant);
         given(restaurantService.getRestaurants()).willReturn(restaurantList);
     }
@@ -67,7 +67,7 @@ class RestaurantControllerTests {
     @Test
     public void save() throws Exception {
 
-        Restaurant restaurant = new Restaurant("JOKER HOUSE", "seoul");
+        Restaurant restaurant = Restaurant.builder().name("JOKER HOUSE").address("Seoul").build();
 
         restaurantService.save(restaurant);
 
