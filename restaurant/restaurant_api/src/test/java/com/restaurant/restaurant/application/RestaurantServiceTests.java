@@ -1,16 +1,12 @@
 package com.restaurant.restaurant.application;
 
-import com.restaurant.restaurant.domain.MenuItemRepository;
-import com.restaurant.restaurant.domain.Restaurant;
-import com.restaurant.restaurant.domain.RestaurantRepository;
+import com.restaurant.restaurant.domain.*;
 import com.restaurant.restaurant.interfaces.RestaurantNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,19 +26,39 @@ class RestaurantServiceTests {
     @Mock
     private MenuItemRepository menuItemRepository;
 
+    @Mock
+    private ReviewRepository reviewRepository;
+
     @Autowired
     private RestaurantService restaurantService;
 
     @BeforeEach
     public void init(){
         MockitoAnnotations.openMocks(this);
-        restaurantService = new RestaurantService(restaurantRepository, menuItemRepository);
+        restaurantService = new RestaurantService(restaurantRepository, menuItemRepository, reviewRepository);
+        testInitGetRestaurants();
+        testInitGetRestaurant();
+    }
+
+    public void testInitGetRestaurants(){
         List<Restaurant> restaurantList = new ArrayList<>();
-        Restaurant restaurant = Restaurant.builder().name("JOKER HOUSE").address("Seoul").build();
-        restaurantList.add(restaurant);
+        restaurantList.add(Restaurant.builder().name("JOKER HOUSE").address("Seoul").build());
         restaurantList.add(Restaurant.builder().name("NUKER HOUSE").address("Seoul").build());
-        when(restaurantRepository.findById(1004L)).thenReturn(Optional.of(restaurant));
         when(restaurantRepository.findAll()).thenReturn(restaurantList);
+    }
+
+    public void testInitGetRestaurant(){
+        Restaurant restaurant = Restaurant.builder().name("JOKER HOUSE").address("Seoul").build();
+
+        List<MenuItem> menuItems = new ArrayList<>();
+        menuItems.add(MenuItem.builder().name("kimchi").build());
+
+        List<Review> reviews = new ArrayList<>();
+        reviews.add(Review.builder().restaurantId(1004L).name("JOKER").score(3).description("soso").build());
+
+        when(restaurantRepository.findById(1004L)).thenReturn(Optional.of(restaurant));
+        when(menuItemRepository.findByRestaurantId(1004L)).thenReturn(menuItems);
+        when(reviewRepository.findByRestaurantId(1004L)).thenReturn(reviews);
     }
 
     @Test
@@ -57,6 +73,8 @@ class RestaurantServiceTests {
         Restaurant restaurant = restaurantService.getRestaurant(1004L);
         assert restaurant != null;
         assertThat(restaurant.getName(), is("JOKER HOUSE"));
+        assertThat(restaurant.getMenuItems().get(0).getName(), is("kimchi"));
+        assertThat(restaurant.getReviews().get(0).getDescription(), is("soso"));
     }
 
     @Test

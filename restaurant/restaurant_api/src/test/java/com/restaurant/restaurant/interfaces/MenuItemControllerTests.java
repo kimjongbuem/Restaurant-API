@@ -41,5 +41,4 @@ class MenuItemControllerTests {
         verify(menuItemService).bulkUpdate(1L, menuItems);
 
     }
-
 }

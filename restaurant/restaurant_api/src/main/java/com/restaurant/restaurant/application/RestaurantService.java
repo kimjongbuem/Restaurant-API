@@ -1,9 +1,6 @@
 package com.restaurant.restaurant.application;
 
-import com.restaurant.restaurant.domain.MenuItem;
-import com.restaurant.restaurant.domain.MenuItemRepository;
-import com.restaurant.restaurant.domain.Restaurant;
-import com.restaurant.restaurant.domain.RestaurantRepository;
+import com.restaurant.restaurant.domain.*;
 import com.restaurant.restaurant.interfaces.RestaurantNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,9 +17,13 @@ public class RestaurantService {
     @Autowired
     private final MenuItemRepository menuItemRepository;
 
-    public RestaurantService(RestaurantRepository restaurantRepository, MenuItemRepository menuItemRepository) {
+    @Autowired
+    private final ReviewRepository reviewRepository;
+
+    public RestaurantService(RestaurantRepository restaurantRepository, MenuItemRepository menuItemRepository, ReviewRepository reviewRepository) {
         this.restaurantRepository = restaurantRepository;
         this.menuItemRepository = menuItemRepository;
+        this.reviewRepository = reviewRepository;
     }
 
     public List<Restaurant> getRestaurants() {
@@ -31,8 +32,13 @@ public class RestaurantService {
 
     public Restaurant getRestaurant(long id) {
         Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(()-> new RestaurantNotFoundException(id));
+
         List<MenuItem> menuItems = menuItemRepository.findByRestaurantId(id);
         restaurant.setMenuItems(menuItems);
+
+        List<Review> reviews = reviewRepository.findByRestaurantId(id);
+        restaurant.setReviews(reviews);
+
         return restaurant;
     }
 
