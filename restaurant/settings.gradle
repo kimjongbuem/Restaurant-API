@@ -1,2 +1,5 @@
 rootProject.name = 'restaurant'
-include 'restaurant_api'
+include 'admin_restaurant_api'
+include 'common_restaurant_api'
+include 'customer_restaurant_api'
+
