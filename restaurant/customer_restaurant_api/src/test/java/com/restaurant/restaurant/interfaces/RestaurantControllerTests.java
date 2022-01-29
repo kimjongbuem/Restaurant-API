@@ -42,20 +42,42 @@ class RestaurantControllerTests {
     @BeforeEach
     public void setUp(){
         List<Restaurant> restaurantList = new ArrayList<>();
-        Restaurant restaurant = Restaurant.builder().name("JOKER HOUSE").address("Seoul").build();
+        Restaurant restaurant = Restaurant.builder().name("JOKER HOUSE").categoryId(1L).address("Seoul").build();
         restaurantList.add(restaurant);
-        restaurantList.add(Restaurant.builder().name("NUKER HOUSE").address("Seoul").build());
+        restaurantList.add(Restaurant.builder().name("NUKER HOUSE").categoryId(1L).address("Seoul").build());
         given(restaurantService.getRestaurant(1004L)).willReturn(restaurant);
         given(restaurantService.getRestaurants()).willReturn(restaurantList);
+        given(restaurantService.getRestaurants("Seoul")).willReturn(restaurantList);
+        given(restaurantService.getRestaurants(1L)).willReturn(restaurantList);
+        given(restaurantService.getRestaurants("Seoul",1L)).willReturn(restaurantList);
     }
 
     @Test
     public void getRestaurants() throws Exception {
+        mvc.perform(get("/restaurants")).andExpect(status().isOk())
+                .andExpect(content().string(containsString("\"name\":\"JOKER HOUSE\"")))
+                .andExpect(content().string(containsString("\"name\":\"NUKER HOUSE\"")));
+    }
 
-         mvc.perform(get("/restaurants")).andExpect(status().isOk())
+    @Test
+    public void getRestaurantsByRegion() throws Exception {
+         mvc.perform(get("/restaurants?region=Seoul")).andExpect(status().isOk())
                  .andExpect(content().string(containsString("\"name\":\"JOKER HOUSE\"")))
                  .andExpect(content().string(containsString("\"name\":\"NUKER HOUSE\"")));
+    }
 
+    @Test
+    public void getRestaurantsByCategoryId() throws Exception {
+        mvc.perform(get("/restaurants?categoryId=1")).andExpect(status().isOk())
+                .andExpect(content().string(containsString("\"name\":\"JOKER HOUSE\"")))
+                .andExpect(content().string(containsString("\"name\":\"NUKER HOUSE\"")));
+    }
+
+    @Test
+    public void getRestaurantsByAddressAndCategoryId() throws Exception {
+        mvc.perform(get("/restaurants?region=Seoul&categoryId=1")).andExpect(status().isOk())
+                .andExpect(content().string(containsString("\"name\":\"JOKER HOUSE\"")))
+                .andExpect(content().string(containsString("\"name\":\"NUKER HOUSE\"")));
     }
 
     @Test

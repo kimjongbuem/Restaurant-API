@@ -42,9 +42,12 @@ class RestaurantServiceTests {
 
     public void testInitGetRestaurants(){
         List<Restaurant> restaurantList = new ArrayList<>();
-        restaurantList.add(Restaurant.builder().name("JOKER HOUSE").address("Seoul").build());
-        restaurantList.add(Restaurant.builder().name("NUKER HOUSE").address("Seoul").build());
+        restaurantList.add(Restaurant.builder().name("JOKER HOUSE").categoryId(1L).address("Seoul").build());
+        restaurantList.add(Restaurant.builder().name("NUKER HOUSE").categoryId(1L).address("Seoul").build());
         when(restaurantRepository.findAll()).thenReturn(restaurantList);
+        when(restaurantRepository.findAllByAddressContaining("Seoul")).thenReturn(restaurantList);
+        when(restaurantRepository.findAllByCategoryId(1L)).thenReturn(restaurantList);
+        when(restaurantRepository.findAllByAddressContainingAndCategoryId("Seoul", 1L)).thenReturn(restaurantList);
     }
 
     public void testInitGetRestaurant(){
@@ -69,6 +72,28 @@ class RestaurantServiceTests {
     }
 
     @Test
+    public void getRestaurantsByAddress(){
+        List<Restaurant> restaurants = restaurantService.getRestaurants("Seoul");
+        assert restaurants != null;
+        assertThat(restaurants.size(), is(2));
+    }
+
+    @Test
+    public void getRestaurantsByCategoryId(){
+        List<Restaurant> restaurants = restaurantService.getRestaurants(1L);
+        assert restaurants != null;
+        assertThat(restaurants.size(), is(2));
+    }
+
+    @Test
+    public void getRestaurantsByAddressAndCategoryId(){
+        List<Restaurant> restaurants = restaurantService.getRestaurants("Seoul", 1L);
+        assert restaurants != null;
+        assertThat(restaurants.size(), is(2));
+    }
+
+
+    @Test
     public void getRestaurant(){
         Restaurant restaurant = restaurantService.getRestaurant(1004L);
         assert restaurant != null;
@@ -82,23 +107,5 @@ class RestaurantServiceTests {
         assertThrows(RestaurantNotFoundException.class, () -> {
             Restaurant restaurant = restaurantService.getRestaurant(404L);
         });
-    }
-
-    @Test
-    public void save(){
-        Restaurant restaurant = Restaurant.builder().name("BeY").address("Busan").build();
-        when(restaurantRepository.save(restaurant)).thenReturn(restaurant);
-        restaurant = restaurantService.save(restaurant);
-        assertThat(restaurant.getName(), is("BeY"));
-        assertThat(restaurant.getAddress(), is("Busan"));
-    }
-
-    @Test
-    public void patchRestaurant(){
-        Restaurant restaurant = Restaurant.builder().name("BeY").address("Busan").build();
-        when(restaurantRepository.findById(1004L)).thenReturn(Optional.of(restaurant));
-        restaurantService.patchRestaurant(1004L, "SOOL HOUSE", "Busan");
-        assertThat(restaurant.getName(), is("SOOL HOUSE"));
-        assertThat(restaurant.getAddress(), is("Busan"));
     }
 }

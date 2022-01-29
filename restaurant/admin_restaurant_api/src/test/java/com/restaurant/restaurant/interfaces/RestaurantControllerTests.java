@@ -8,7 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -18,10 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.core.StringContains.containsString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
@@ -75,12 +74,12 @@ class RestaurantControllerTests {
     @Test
     public void save() throws Exception {
 
-        Restaurant restaurant = Restaurant.builder().name("JOKER HOUSE").address("Seoul").build();
+        Restaurant restaurant = Restaurant.builder().categoryId(1L).name("JOKER HOUSE").address("Seoul").build();
 
         restaurantService.save(restaurant);
 
         mvc.perform(post("/restaurants").
-                contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"JOKER HOUSE\", \"address\":\"seoul\"}"))
+                contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"JOKER HOUSE\", \"address\":\"seoul\", \"categoryId\":1}"))
                 .andExpect(status().isCreated())
                 .andExpect((ResultMatcher) header().string("location", "/restaurant/"+restaurant.getId()))
                 .andExpect(content().string(containsString("{}")));
@@ -91,15 +90,14 @@ class RestaurantControllerTests {
     @Test
     public void inValidSave() throws Exception {
         mvc.perform(post("/restaurants").
-                contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"\", \"address\":\"\"}"))
+                contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"\", \"address\":\"\", \"categoryId\":1}"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     public void patchRestaurant() throws Exception {
-
         mvc.perform(patch("/restaurants/1004")
-                .contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"SOOL HOUSE\", \"address\":\"Busan\"}"))
+                .contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"SOOL HOUSE\", \"address\":\"Busan\", \"categoryId\":1}"))
                 .andExpect(status().isOk());
 
         verify(restaurantService).patchRestaurant(1004L, "SOOL HOUSE", "Busan");
@@ -107,9 +105,8 @@ class RestaurantControllerTests {
 
     @Test
     public void invalidPatchRestaurant() throws Exception {
-
         mvc.perform(patch("/restaurants/1004")
-                .contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"\", \"address\":\"\"}"))
+                .contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"\", \"address\":\"\", \"categoryId\":1}"))
                 .andExpect(status().isBadRequest());
 
     }

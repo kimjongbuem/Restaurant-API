@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
@@ -24,6 +25,9 @@ public class Restaurant {
 
     @NotEmpty
     private String name;
+
+    @NotNull
+    private long categoryId;
 
     @NotEmpty
     private String address;
