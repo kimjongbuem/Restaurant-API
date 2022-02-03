@@ -15,4 +15,11 @@ public class RestaurantControllerAdvice {
     public String restaurantNotFound(){
         return "{}";
     }
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(UserNotFoundException.class)
+    public String userNotFound(){
+        return "{}";
+    }
 }

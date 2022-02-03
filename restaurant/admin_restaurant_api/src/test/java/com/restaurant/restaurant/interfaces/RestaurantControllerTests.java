@@ -108,6 +108,5 @@ class RestaurantControllerTests {
         mvc.perform(patch("/restaurants/1004")
                 .contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"\", \"address\":\"\", \"categoryId\":1}"))
                 .andExpect(status().isBadRequest());
-
     }
 }
