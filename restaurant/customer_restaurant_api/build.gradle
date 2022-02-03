@@ -16,6 +16,7 @@ repositories {
 dependencies {
     implementation project(':common_restaurant_api')
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa' // jpa
     implementation 'com.h2database:h2' // h2 database
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.6.2'
