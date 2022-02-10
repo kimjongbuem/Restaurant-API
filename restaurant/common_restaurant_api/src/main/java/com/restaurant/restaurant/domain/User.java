@@ -1,5 +1,6 @@
 package com.restaurant.restaurant.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -35,5 +36,10 @@ public class User {
     }
     public boolean isActive(){
         return level != 0;
+    }
+
+    @JsonIgnore
+    public String getAccessToken() {
+        return password.substring(0,10);
     }
 }

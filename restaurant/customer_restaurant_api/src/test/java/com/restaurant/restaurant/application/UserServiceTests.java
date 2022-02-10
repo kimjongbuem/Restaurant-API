@@ -2,11 +2,14 @@ package com.restaurant.restaurant.application;
 
 import com.restaurant.restaurant.domain.User;
 import com.restaurant.restaurant.domain.UserRepository;
+import com.restaurant.restaurant.interfaces.EmailInValidException;
+import com.restaurant.restaurant.interfaces.PasswordInValidException;
 import com.restaurant.restaurant.interfaces.UserExistedEmailException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +18,7 @@ import static org.assertj.core.api.BDDAssumptions.given;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -24,11 +28,14 @@ class UserServiceTests {
 
     @Mock
     UserRepository userRepository;
+    @Mock
+    PasswordEncoder passwordEncoder;
+
 
     @BeforeEach
     public void init(){
         MockitoAnnotations.openMocks(this);
-        userService = new UserService(userRepository);
+        userService = new UserService(userRepository, passwordEncoder);
     }
 
     @Test
@@ -68,6 +75,40 @@ class UserServiceTests {
         assertThrows(UserExistedEmailException.class, ()->{
             when(userRepository.findByEmail(email)).thenReturn(java.util.Optional.ofNullable(user));
             userService.createUser(email, name, password);
+        });
+    }
+
+    @Test
+    public void authenticateWithValidData(){
+        String email = "test@example.com";
+        String password = "test";
+        User user = User.builder().email(email).build();
+        when(userRepository.findByEmail(email)).thenReturn(java.util.Optional.ofNullable(user));
+        when(passwordEncoder.matches(any(), any())).thenReturn(true);
+        user = userService.authenticate(email, password);
+        assertThat(user.getEmail(), is(email));
+    }
+
+    @Test
+    public void authenticateWithInValidEmail(){
+        String email = "x@example.com";
+        String password = "test";
+        User user = User.builder().email(email).build();
+        assertThrows(EmailInValidException.class, ()->{
+            when(userRepository.findByEmail(email)).thenThrow(EmailInValidException.class);
+            userService.authenticate(email, password);
+        });
+    }
+
+    @Test
+    public void authenticateWithInValidPassword(){
+        String email = "test@example.com";
+        String password = "x";
+        User user = User.builder().email(email).build();
+        assertThrows(PasswordInValidException.class, ()->{
+            when(userRepository.findByEmail(email)).thenReturn(java.util.Optional.ofNullable(user));
+            when(passwordEncoder.matches(any(), any())).thenReturn(false);
+            userService.authenticate(email, password);
         });
     }
 
