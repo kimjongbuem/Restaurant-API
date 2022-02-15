@@ -30,6 +30,8 @@ class ReviewControllerTests {
     @Test
     public void addReviewWithValidData() throws Exception {
 
+        String token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjE2MSwibmFtZSI6ImtlaiJ9.YpFqCJ2N8ybATU16RLhsPk1Stl2B4aJ2C07bDlkMaZ8";
+
         Review review = Review.builder()
                         .name("JOKER")
                         .score(3)
@@ -39,8 +41,9 @@ class ReviewControllerTests {
         reviewService.addReview(review);
 
         mvc.perform(post("/restaurants/1/reviews")
+                    .header("Authorization", "Bearer " + token)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content("{\"name\":\"JOKER\",\"score\":3,\"description\":\"Great!\"}"))
+                    .content("{\"score\":3,\"description\":\"Great!\"}"))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("location","/restaurants/1/reviews/" + review.getId()))
                 .andExpect(content().string("{}"));
